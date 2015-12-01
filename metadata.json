@@ -1,0 +1,16 @@
+{
+  "name": "vshn-burp",
+  "version": "0.1.0",
+  "author": "Tobias Brunner",
+  "summary": "BURP - BackUp and Restore Program",
+  "license": "BSD-3-Clause",
+  "source": "https://github.com/vshn/puppet-burp/",
+  "project_page": "https://github.com/vshn/puppet-burp/",
+  "issues_url": "https://github.com/vshn/puppet-burp/issues",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 1.0.0"
+    }
+  ]
+}
