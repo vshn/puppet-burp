@@ -3,15 +3,16 @@
 #
 #
 define burp::client (
-  $configuration = {},
-  $server = "backup.${::fqdn}",
   $ca_dir = "/var/lib/burp/CA-client-${name}",
-  $manage_cron = true,
-  $manage_clientconfig = true,
-  $manage_ca_dir = true,
-  $cron_mode = 't',
+  $clientconf_tag = undef,
+  $configuration = {},
   $cron_minute = '5',
+  $cron_mode = 't',
+  $manage_ca_dir = true,
+  $manage_clientconfig = true,
+  $manage_cron = true,
   $password = fqdn_rand_string(10),
+  $server = "backup.${::fqdn}",
 ) {
 
   ## Default configuration parameters for BURP client
@@ -63,9 +64,19 @@ define burp::client (
 
   ## Exported resource for clientconf
   if $manage_clientconfig {
-    @@::burp::clientconfig { $::fqdn:
+    if $configuration['cname'] {
+      $_clientname = $configuration['cname']
+    } else {
+      $_clientname = $::fqdn
+    }
+    if $clientconf_tag == undef {
+      $_clientconf_tag = $server
+    } else {
+      $_clientconf_tag = $clientconf_tag
+    }
+    @@::burp::clientconfig { $_clientname:
       password => $password,
-      tag      => $server,
+      tag      => $_clientconf_tag,
     }
   }
 

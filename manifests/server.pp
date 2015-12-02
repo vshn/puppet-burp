@@ -4,7 +4,6 @@
 #
 class burp::server (
   $configuration = {},
-  $manage_clientconfig = true,
 ) inherits burp {
 
   ## Default configuration parameters for BURP server
@@ -105,8 +104,8 @@ class burp::server (
   }
 
   ## Instantiate clientconfigs
-  if $manage_clientconfig {
-    ::Burp::Clientconfig <<| tag == $::fqdn |>>
+  if $::burp::server_manage_clientconfig {
+    ::Burp::Clientconfig <<| tag == $::burp::server_clientconfig_tag |>>
   }
 
   ## Manage service if enabled
