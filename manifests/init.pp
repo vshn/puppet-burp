@@ -1,54 +1,47 @@
 # == Class: burp
 #
-# Full description of class burp here.
+# This module installs and configures BURP backup server and client.
 #
 # === Parameters
 #
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
+# [*manage_package*]
+#   Default: true
+#   Enable or disable package installation.
 #
-# === Examples
+# [*package_ensure*]
+#   Default: installed
+#   Can be used to choose exact package version to install.
 #
-#  class { 'burp':
-#    sample_parameter => 'sample value',
-#  }
+# [*package_name*]
+#   Default: burp
+#   Name of the package.
+#
+# [*config_dir*]
+#   Default: /etc/burp
+#   Path where all the BURP configuration files will be written to.
+#
+# [*clients*]
+#   Default: {}
+#   Hash of `::burp::client` instances. Will be passed to `create_resources`.
 #
 # === Authors
 #
-# Tobias Brunner
+# Tobias Brunner <tobias.brunner@vshn.ch>
 #
 # === Copyright
 #
-# Copyright 2015 Tobias Brunner
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class burp (
   # package installation handling
-  $package_ensure = 'installed',
-  $package_name = $::burp::params::package_name,
   $manage_package = true,
-  # general burp configuration handling
+  $package_ensure = 'installed',
+  $package_name = 'burp',
+  # general burp configuration handling (client/server)
   $config_dir = '/etc/burp',
-  # burp server configuration
-  $manage_server_service = true,
-  $manage_server_user = true,
-  $server_config_file = '/etc/burp/burp-server.conf',
-  $server_config_clientconfdir = '/etc/burp/clients',
-  $server_group = 'burp',
-  $server_service_enable = true,
-  $server_service_ensure = 'running',
-  $server_service_name = $::burp::params::service_name,
-  $server_user = 'burp',
-  $server_user_home = '/var/lib/burp',
-  $server_ca_config_file = '/etc/burp/CA.cnf',
-  $server_ca_dir = '/var/lib/burp/CA',
-  $server_ca_enabled = true,
-  $server_ssl_cert_ca = '/var/lib/burp/ssl_cert_ca.pem',
-  $server_ssl_cert = '/var/lib/burp/ssl_cert-server.pem',
-  $server_ssl_key = '/var/lib/burp/ssl_cert-server.key',
-  $server_ssl_dhfile = '/var/lib/burp/dhfile.pem',
   # clients
   $clients = {},
-) inherits ::burp::params {
+) {
 
   ## Install BURP
   class { '::burp::install': } ->
