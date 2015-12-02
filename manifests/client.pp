@@ -11,36 +11,48 @@ define burp::client (
   $manage_ca_dir = true,
   $manage_clientconfig = true,
   $manage_cron = true,
-  $password = fqdn_rand_string(10),
+  $manage_extraconfig = true,
   $server = "backup.${::fqdn}",
+  $password = fqdn_rand_string(10),
 ) {
 
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)
   $_default_configuration = {
-    'mode'                  => 'client',
-    'port'                  => '4971',
-    'server'                => $server,
-    'password'              => $password,
-    'cname'                 => $::fqdn,
-    'pidfile'               => "/tmp/burp.client.${name}.pid",
-    'syslog'                => 0,
-    'stdout'                => 1,
-    'progress_counter'      => 1,
-    'server_can_restore'    => 0,
-    'cross_filesystem'      => '/home',
-    'cross_all_filesystems' => 0,
     'ca_burp_ca'            => '/usr/sbin/burp_ca',
     'ca_csr_dir'            => $ca_dir,
-    'ssl_cert_ca'           => "${ca_dir}/ssl_cert_ca.pem",
+    'cname'                 => $::fqdn,
+    'cross_all_filesystems' => 0,
+    'cross_filesystem'      => '/home',
+    'mode'                  => 'client',
+    'password'              => $password,
+    'pidfile'               => "/tmp/burp.client.${name}.pid",
+    'port'                  => '4971',
+    'progress_counter'      => 1,
+    'server'                => $server,
+    'server_can_restore'    => 0,
     'ssl_cert'              => "${ca_dir}/ssl_cert-client.pem",
+    'ssl_cert_ca'           => "${ca_dir}/ssl_cert_ca.pem",
     'ssl_key'               => "${ca_dir}/ssl_cert-client.key",
     'ssl_peer_cn'           => $server,
+    'stdout'                => 1,
+    'syslog'                => 0,
   }
   $_configuration = merge($_default_configuration,$configuration)
 
   ## Write client configuration file
-  file { "${::burp::config_dir}/burp-${name}.conf":
+  if $manage_extraconfig {
+    $_include = "${::burp::config_dir}/${name}-extra.conf"
+    concat { "${::burp::config_dir}/${name}-extra.conf":
+      ensure  => present,
+    }
+    concat::fragment { 'burpclient_extra_header':
+      target  => "${::burp::config_dir}/${name}-extra.conf",
+      content => "# THIS FILE IS MANAGED BY PUPPET\n# Contains additional client configuration\n",
+      order   => 01,
+    }
+  }
+  file { "${::burp::config_dir}/${name}.conf":
     ensure  => file,
     content => template('burp/burp.conf.erb'),
     require => Class['::burp::config'],
@@ -56,7 +68,7 @@ define burp::client (
   ## Cronjob
   if $manage_cron {
     cron { "burp_client_${name}":
-      command => "/usr/sbin/burp -c ${::burp::config_dir}/burp-${name}.conf -a ${cron_mode} >/dev/null 2>&1",
+      command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} >/dev/null 2>&1",
       user    => 'root',
       minute  => $cron_minute,
     }

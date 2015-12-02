@@ -8,11 +8,6 @@ class burp::config {
     ensure  => directory,
     purge   => true,
     recurse => true,
-  } ->
-  file { $::burp::server_config_clientconfdir:
-    ensure  => directory,
-    purge   => true,
-    recurse => true,
   }
 
 }

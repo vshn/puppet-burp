@@ -1,7 +1,7 @@
 # THIS FILE IS MANAGED BY PUPPET
 
 RANDFILE                = /dev/urandom
-CA_DIR                  = <%= scope['burp::server_ca_dir'] %>
+CA_DIR                  = <%= @ca_dir %>
 
 [ ca ]
 dir                     = $ENV::CA_DIR
