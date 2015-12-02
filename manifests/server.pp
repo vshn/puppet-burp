@@ -59,7 +59,7 @@ class burp::server (
                                       'Mon,Tue,Wed,Thu,Fri,00,01,02,03,04,05,19,20,21,22,23',
                                       'Sat,Sun,00,01,02,03,04,05,06,07,08,17,18,19,20,21,22,23', ],
     'timer_script'                => '/usr/local/bin/burp_timer_script',
-    'umask'                       => 0022,
+    'umask'                       => '0022',
     'user'                        => $user,
     'version_warn'                => 1,
     'working_dir_recovery_method' => 'delete',

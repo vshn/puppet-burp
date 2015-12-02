@@ -16,7 +16,7 @@ define burp::clientconfig (
   ## Write client configuration file
   file { "${::burp::server::clientconfig_dir}/${name}":
     ensure  => file,
-    content => template('burp/burp.conf.erb'),
+    content => template('burp/burp-clientconfig.conf.erb'),
     require => Class['::burp::config'],
   }
 
