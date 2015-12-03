@@ -8,7 +8,7 @@
 #   Default: /var/lib/burp/CA-client-${name}
 #   Directory where all client certificate related files are saved to.
 #
-# [*clientconf_tag*]
+# [*clientconfig_tag*]
 #   Default: $server
 #   Puppet tag which gets assigned to `::burp::clientconfig` resources for
 #   later collection on the BURP server using exported resources.
@@ -42,7 +42,7 @@
 # [*manage_clientconfig*]
 #   Default: true
 #   Manage clientconfig or not. If true, an exported resource of type
-#   `::burp::clientconfig` will be created and the tag `clientconf_tag`
+#   `::burp::clientconfig` will be created and the tag `clientconfig_tag`
 #   assigned. Can be collected on the BURP backup server.
 #
 # [*manage_cron*]
@@ -74,7 +74,7 @@
 #
 define burp::client (
   $ca_dir = "/var/lib/burp/CA-client-${name}",
-  $clientconf_tag = undef,
+  $clientconfig_tag = undef,
   $configuration = {},
   $cron_minute = '5',
   $cron_mode = 't',
@@ -148,21 +148,21 @@ define burp::client (
     }
   }
 
-  ## Exported resource for clientconf
+  ## Exported resource for clientconfig
   if $manage_clientconfig {
     if $configuration['cname'] {
       $_clientname = $configuration['cname']
     } else {
       $_clientname = $::fqdn
     }
-    if $clientconf_tag == undef {
-      $_clientconf_tag = $server
+    if $clientconfig_tag == undef {
+      $_clientconfig_tag = $server
     } else {
-      $_clientconf_tag = $clientconf_tag
+      $_clientconfig_tag = $clientconfig_tag
     }
     @@::burp::clientconfig { $_clientname:
       password => $password,
-      tag      => $_clientconf_tag,
+      tag      => $_clientconfig_tag,
     }
   }
 

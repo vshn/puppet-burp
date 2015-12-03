@@ -123,7 +123,9 @@ class burp::server (
   $ssl_key = '/var/lib/burp/ssl_cert-server.key',
   $user = 'burp',
   $user_home = '/var/lib/burp',
-) inherits burp {
+) {
+
+  include ::burp
 
   ## Default configuration parameters for BURP server
   # parameters coming from a default BURP installation (most of them)
