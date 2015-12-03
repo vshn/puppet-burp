@@ -25,7 +25,7 @@
 #   Puppet tag to collect exported `burp::clientconfig` resources.
 #
 # [*config_file*]
-#   Default: /etc/burp/server.conf
+#   Default: /etc/burp/burp-server.conf
 #   Configuration file to put BURP backup server configuration into.
 #
 # [*configuration*]
@@ -107,7 +107,7 @@ class burp::server (
   $ca_enabled = true,
   $clientconfig_dir = '/etc/burp/clients',
   $clientconfig_tag = $::fqdn,
-  $config_file = '/etc/burp/server.conf',
+  $config_file = '/etc/burp/burp-server.conf',
   $configuration = {},
   $group = 'burp',
   $manage_clientconfig = true,
