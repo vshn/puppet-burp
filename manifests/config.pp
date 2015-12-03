@@ -8,6 +8,7 @@ class burp::config {
     ensure  => directory,
     purge   => true,
     recurse => true,
+    force   => true,
   }
 
 }
