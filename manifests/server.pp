@@ -1,6 +1,105 @@
 # == Class burp::server
 #
+# This class configures the BURP backup server.
 #
+# === Parameters
+#
+# [*ca_config_file*]
+#   Default: /etc/burp/CA.cnf
+#   CA configuration file.
+#
+# [*ca_dir*]
+#   Default: /var/lib/burp/CA
+#   Directory where all CA related files are saved to.
+#
+# [*ca_enabled*]
+#   Default: true
+#   Whether to enable the BURP CA or not.
+#
+# [*clientconfig_dir*]
+#   Default: /etc/burp/clients
+#   Directory to save client configuration to.
+#
+# [*clientconfig_tag*]
+#   Default: $::fqdn
+#   Puppet tag to collect exported `burp::clientconfig` resources.
+#
+# [*config_file*]
+#   Default: /etc/burp/server.conf
+#   Configuration file to put BURP backup server configuration into.
+#
+# [*configuration*]
+#   Default: {}
+#   Hash of server configuration directives. See man page of BURP, section
+#   "SERVER CONFIGURATION FILE OPTIONS", for a detailed list of all possible
+#   values. A big bunch of default values are already prepared (see code below).
+#   Values defined in this hash will get merged and will override the default
+#   parameters!
+#
+# [*group*]
+#   Default: burp
+#   Group to run BURP backup server under.
+#
+# [*manage_clientconfig*]
+#   Default: true
+#   Collect `::burp::clientconfig` exported resources, filtered by `clientconfig_tag`.
+#
+# [*manage_rsyslog*]
+#   Default: true
+#   Put a rsyslog config file under /etc/rsyslog.d/21-burp.conf to filter syslog
+#   messages from BURP backup server and put them into /var/log/burp.log.
+#
+# [*manage_service*]
+#   Default: true
+#   Manage the BURP backup system service.
+#
+# [*manage_user*]
+#   Default: true
+#   Manage the BURP backup system service user.
+#
+# [*service_enable*]
+#   Default: true
+#   Enable the BURP backup system service on system boot.
+#
+# [*service_ensure*]
+#   Default: running
+#   Desired state of the BURP backup system service.
+#
+# [*service_name*]
+#   Default: burp
+#   Name of the BURP backup system service.
+#
+# [*ssl_cert*]
+#   Default: /var/lib/burp/ssl_cert-server.pem
+#   BURP backup server SSL certificate file.
+#
+# [*ssl_cert_ca*]
+#   Default: /var/lib/burp/ssl_cert_ca.pem
+#   BURP backup server SSL CA certificate file.
+#
+# [*ssl_dhfile*]
+#   Default: /var/lib/burp/dhfile.pem
+#   BURP backup server SSL DH params file.
+#
+# [*ssl_key*]
+#   Default: /var/lib/burp/ssl_cert-server.key
+#   BURP backup server SSL certificate key file.
+#
+# [*user*]
+#   Default: burp
+#   User to run BURP backup server under.
+#
+# [*user_home*]
+#   Default: /var/lib/burp
+#   BURP backup server home and working directory.
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class burp::server (
   $ca_config_file = '/etc/burp/CA.cnf',
@@ -17,7 +116,7 @@ class burp::server (
   $manage_user = true,
   $service_enable = true,
   $service_ensure = 'running',
-  $service_name = $::burp::params::service_name,
+  $service_name = 'burp',
   $ssl_cert = '/var/lib/burp/ssl_cert-server.pem',
   $ssl_cert_ca = '/var/lib/burp/ssl_cert_ca.pem',
   $ssl_dhfile = '/var/lib/burp/dhfile.pem',

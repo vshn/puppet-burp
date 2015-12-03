@@ -1,6 +1,71 @@
 # == Define burp::client
 #
+# This defined type configures a BURP backup client.
 #
+# === Parameters
+#
+# [*ca_dir*]
+#   Default: /var/lib/burp/CA-client-${name}
+#   Directory where all client certificate related files are saved to.
+#
+# [*clientconf_tag*]
+#   Default: $server
+#   Puppet tag which gets assigned to `::burp::clientconfig` resources for
+#   later collection on the BURP server using exported resources.
+#
+# [*configuration*]
+#   Default: {}
+#   Hash of client configuration directives. See man page of BURP, section
+#   "CLIENT CONFIGURATION FILE OPTIONS", for a detailed list of all possible
+#   values. A big bunch of default values are already prepared (see code below).
+#   Values defined in this hash will get merged and will override the default
+#   parameters!
+#
+# [*cron_minute*]
+#   Default: 5
+#   Minute part of the BURP backup client cron job.
+#
+# [*cron_mode*]
+#   Default: t
+#   Mode to run the BURP backup client in. Possible values:
+#   b (backup) or t (timed  backup).
+#
+# [*manage_ca_dir*]
+#   Default: true
+#   Manage CA directory or not.
+#
+# [*manage_clientconfig*]
+#   Default: true
+#   Manage clientconfig or not. If true, an exported resource of type
+#   `::burp::clientconfig` will be created and the tag `clientconf_tag`
+#   assigned. Can be collected on the BURP backup server.
+#
+# [*manage_cron*]
+#   Default: true
+#   Manage BURP backup client cron job.
+#
+# [*manage_extraconfig*]
+#   Default: true
+#   Manage BURP backup client extra configuration. If set to true, a extra
+#   configuration file will be included in the main client configuration
+#   file. This extra configuration file can be filled with the `burp::extraconfig`
+#   defined type.
+#
+# [*server*]
+#   Default: "backup.${::domain}"
+#   BURP backup server address.
+#
+# [*password*]
+#   Default: fqdn_rand_string(10)
+#   Password to authenticate the client on the BURP backup server.
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::client (
   $ca_dir = "/var/lib/burp/CA-client-${name}",
@@ -12,9 +77,12 @@ define burp::client (
   $manage_clientconfig = true,
   $manage_cron = true,
   $manage_extraconfig = true,
-  $server = "backup.${::fqdn}",
+  $server = "backup.${::domain}",
   $password = fqdn_rand_string(10),
 ) {
+
+  ## Some input validations
+  validate_re($cron_mode,['^b$','^t$'],'cron_mode must be one of "b" or "t"')
 
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)

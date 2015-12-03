@@ -1,25 +1,36 @@
 # == Class: burp
 #
-# Full description of class burp here.
+# This module installs and configures BURP backup server and client.
 #
 # === Parameters
 #
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
+# [*manage_package*]
+#   Default: true
+#   Enable or disable package installation.
 #
-# === Examples
+# [*package_ensure*]
+#   Default: installed
+#   Can be used to choose exact package version to install.
 #
-#  class { 'burp':
-#    sample_parameter => 'sample value',
-#  }
+# [*package_name*]
+#   Default: burp
+#   Name of the package.
+#
+# [*config_dir*]
+#   Default: /etc/burp
+#   Path where all the BURP configuration files will be written to.
+#
+# [*clients*]
+#   Default: {}
+#   Hash of `::burp::client` instances. Will be passed to `create_resources`.
 #
 # === Authors
 #
-# Tobias Brunner
+# Tobias Brunner <tobias.brunner@vshn.ch>
 #
 # === Copyright
 #
-# Copyright 2015 Tobias Brunner
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class burp (
   # package installation handling
