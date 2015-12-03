@@ -22,7 +22,7 @@
 #   parameters!
 #
 # [*cron_minute*]
-#   Default: 5
+#   Default: */5
 #   Minute part of the BURP backup client cron job.
 #
 # [*cron_mode*]
@@ -76,7 +76,7 @@ define burp::client (
   $ca_dir = "/var/lib/burp/CA-client-${name}",
   $clientconfig_tag = undef,
   $configuration = {},
-  $cron_minute = '5',
+  $cron_minute = '*/5',
   $cron_mode = 't',
   $cron_randomise = '60',
   $manage_ca_dir = true,
