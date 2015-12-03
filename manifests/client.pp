@@ -28,7 +28,12 @@
 # [*cron_mode*]
 #   Default: t
 #   Mode to run the BURP backup client in. Possible values:
-#   b (backup) or t (timed  backup).
+#   b (backup) or t (timed backup).
+#
+# [*cron_randomise*]
+#   Default: 60
+#   When running a timed backup (`t` mode), sleep for a random number of seconds (between 0 and the  number  given)
+#   before contacting the server.
 #
 # [*manage_ca_dir*]
 #   Default: true
@@ -73,6 +78,7 @@ define burp::client (
   $configuration = {},
   $cron_minute = '5',
   $cron_mode = 't',
+  $cron_randomise = '60',
   $manage_ca_dir = true,
   $manage_clientconfig = true,
   $manage_cron = true,
@@ -136,7 +142,7 @@ define burp::client (
   ## Cronjob
   if $manage_cron {
     cron { "burp_client_${name}":
-      command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} >/dev/null 2>&1",
+      command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} -q ${cron_randomise} >/dev/null 2>&1",
       user    => 'root',
       minute  => $cron_minute,
     }
