@@ -4,12 +4,12 @@
 2. [Module Description - What the module does and why it is useful](#module-description)
 3. [Setup - The basics of getting started with burp](#setup)
     * [What burp affects](#what-burp-affects)
-    * [Setup requirements](#setup-requirements)
     * [Beginning with burp](#beginning-with-burp)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
+7. [Contributors](#contributors)
 
 ## Overview
 
@@ -50,6 +50,11 @@ it easier to call the application (so you don't need to add `-c` to every call).
 * System service `burp` if configuring the server
 * Cronjob if configuring a client
 * Exported resources for creating clientconfigs on the backup server
+* Delivery of some default scripts to `/usr/local/bin`:
+  * `burp_timer_script`
+  * `burp_summary_script`
+  * `burp_notify_script`
+  * `burp_ssl_extra_checks_script`
 
 ### Beginning with burp
 

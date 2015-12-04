@@ -238,6 +238,8 @@ class burp::server (
   if $manage_service {
     File[$config_file] ~> Service['burp']
     if $manage_rsyslog {
+      # Pitfall: This file resource does not notify rsyslog and so it only comes active
+      # after manually reloading rsyslog
       file { '/etc/rsyslog.d/21-burp.conf':
         ensure  => file,
         content => 'if $programname == \'burp\' then /var/log/burp.log',
