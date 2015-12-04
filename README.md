@@ -33,7 +33,7 @@ also allows to use the upcomming [BURP version 2](http://burp.grke.org/burp2.htm
 
 In opposite to the original BURP packaging, this Puppet module configures BURP to only have configuration
 files in `/etc/burp` and no dynamic data. All dynamic data like SSL certificates (CA) and the backup
-data is by default configured to be located under `/var/lib/burp`.
+data is by default configured to be located under `/var/lib/burp` (server) and `/var/lib/burp-<clientname>`.
 
 There can by many client configurations, f.e. to backup to different backup servers
 with different parameters. Just instantiate the `::burp::client` defined type. The default
@@ -46,7 +46,8 @@ it easier to call the application (so you don't need to add `-c` to every call).
 
 * Package `burp`
 * Configuration files under `/etc/burp/`
-* Directory `/var/lib/burp`
+* BURP server: directory `/var/lib/burp`
+* BURP client: directory `/var/lib/burp-${name}`
 * System service `burp` if configuring the server
 * Cronjob if configuring a client
 * Exported resources for creating clientconfigs on the backup server

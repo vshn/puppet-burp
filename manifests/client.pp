@@ -4,9 +4,9 @@
 #
 # === Parameters
 #
-# [*ca_dir*]
-#   Default: /var/lib/burp/CA-client-${name}
-#   Directory where all client certificate related files are saved to.
+# [*working_dir*]
+#   Default: /var/lib/burp-${name}
+#   Directory where all client related files are saved to (ex. ssl certificate).
 #
 # [*clientconfig_tag*]
 #   Default: $server
@@ -73,7 +73,7 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::client (
-  $ca_dir = "/var/lib/burp/CA-client-${name}",
+  $working_dir = "/var/lib/burp-${name}",
   $clientconfig_tag = undef,
   $configuration = {},
   $cron_minute = '*/5',
@@ -92,9 +92,10 @@ define burp::client (
 
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)
+  $_ca_dir = "${working_dir}/ssl"
   $_default_configuration = {
     'ca_burp_ca'            => '/usr/sbin/burp_ca',
-    'ca_csr_dir'            => $ca_dir,
+    'ca_csr_dir'            => $_ca_dir,
     'cname'                 => $::fqdn,
     'cross_all_filesystems' => 0,
     'cross_filesystem'      => '/home',
@@ -105,9 +106,9 @@ define burp::client (
     'progress_counter'      => 1,
     'server'                => $server,
     'server_can_restore'    => 0,
-    'ssl_cert'              => "${ca_dir}/ssl_cert-client.pem",
-    'ssl_cert_ca'           => "${ca_dir}/ssl_cert_ca.pem",
-    'ssl_key'               => "${ca_dir}/ssl_cert-client.key",
+    'ssl_cert'              => "${_ca_dir}/ssl_cert-client.pem",
+    'ssl_cert_ca'           => "${_ca_dir}/ssl_cert_ca.pem",
+    'ssl_key'               => "${_ca_dir}/ssl_cert-client.key",
     'ssl_peer_cn'           => $server,
     'stdout'                => 1,
     'syslog'                => 0,
@@ -132,11 +133,12 @@ define burp::client (
     require => Class['::burp::config'],
   }
 
-  ## Prepare CA dir
-  if $manage_ca_dir {
-    file { $ca_dir:
-      ensure => directory,
-    }
+  ## Prepare working dir
+  file { $working_dir:
+    ensure => directory,
+  } ->
+  file { $_ca_dir:
+    ensure => directory,
   }
 
   ## Cronjob
