@@ -1,16 +1,78 @@
 {
   "name": "vshn-burp",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Tobias Brunner",
   "summary": "BURP - BackUp and Restore Program",
   "license": "BSD-3-Clause",
   "source": "https://github.com/vshn/puppet-burp/",
   "project_page": "https://github.com/vshn/puppet-burp/",
   "issues_url": "https://github.com/vshn/puppet-burp/issues",
+  "tags": [
+    "burp",
+    "backup"
+  ],
   "dependencies": [
     {
-      "name": "puppetlabs-stdlib",
-      "version_requirement": ">= 1.0.0"
+      "name": "puppetlabs/stdlib",
+      "version_requirement": "4.x"
+    },
+    {
+      "name": "puppetlabs/concat",
+      "version_requirement": ">=1.0."
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "12.04",
+        "14.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": ">=3.7.0 <5.0.0"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">=3.7.0 <5.0.0"
     }
   ]
 }
