@@ -35,10 +35,6 @@
 #   When running a timed backup (`t` mode), sleep for a random number of seconds (between 0 and the  number  given)
 #   before contacting the server.
 #
-# [*manage_ca_dir*]
-#   Default: true
-#   Manage CA directory or not.
-#
 # [*manage_clientconfig*]
 #   Default: true
 #   Manage clientconfig or not. If true, an exported resource of type
@@ -79,7 +75,6 @@ define burp::client (
   $cron_minute = '*/5',
   $cron_mode = 't',
   $cron_randomise = '60',
-  $manage_ca_dir = true,
   $manage_clientconfig = true,
   $manage_cron = true,
   $manage_extraconfig = true,
