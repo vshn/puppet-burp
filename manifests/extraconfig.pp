@@ -5,9 +5,8 @@
 # === Parameters
 #
 # [*client*]
-#   Default:
-#   Mandatory. Name of the BURP backup client which this extra config
-#   belongs to.
+#   Default: burp
+#   Name of the BURP backup client which this extra config belongs to.
 #
 # [*configuration*]
 #   Default: {}
@@ -24,8 +23,8 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::extraconfig (
-  $client,
   $configuration,
+  $client = 'burp',
 ) {
 
   ## Input validation
