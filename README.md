@@ -106,6 +106,10 @@ Example:
 }
 ```
 
+## More Examples
+
+Please see the `examples/profiles/` directory for more usage examples.
+
 ## Limitations
 
 The module has been developed under Ubuntu. But it should also work on Debian, RedHat, CentOS and probably more Linux OS.
