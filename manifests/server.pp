@@ -125,6 +125,29 @@ class burp::server (
   $user_home = '/var/lib/burp',
 ) {
 
+  ## Input validation
+  validate_absolute_path($ca_config_file)
+  validate_absolute_path($ca_dir)
+  validate_bool($ca_enabled)
+  validate_absolute_path($clientconfig_dir)
+  validate_string($clientconfig_tag)
+  validate_absolute_path($config_file)
+  validate_hash($configuration)
+  validate_string($group)
+  validate_bool($manage_clientconfig)
+  validate_bool($manage_rsyslog)
+  validate_bool($manage_service)
+  validate_bool($manage_user)
+  validate_bool($service_enable)
+  validate_string($service_ensure)
+  validate_string($service_name)
+  validate_absolute_path($ssl_cert)
+  validate_absolute_path($ssl_cert_ca)
+  validate_absolute_path($ssl_dhfile)
+  validate_absolute_path($ssl_key)
+  validate_string($user)
+  validate_absolute_path($user_home)
+
   include ::burp
 
   ## Default configuration parameters for BURP server

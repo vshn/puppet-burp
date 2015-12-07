@@ -28,6 +28,10 @@ define burp::clientconfig (
   $configuration = {},
 ) {
 
+  ## Input validation
+  validate_string($password)
+  validate_hash($configuration)
+
   ## Default configuration parameters for BURP clientconfig
   $_default_configuration = {
     'password' => $password,

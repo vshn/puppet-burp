@@ -43,6 +43,13 @@ class burp (
   $clients = {},
 ) {
 
+  ## Input validation
+  validate_bool($manage_package)
+  validate_string($package_ensure)
+  validate_string($package_name)
+  validate_absolute_path($config_dir)
+  validate_hash($clients)
+
   ## Install BURP
   class { '::burp::install': } ->
   class { '::burp::config': }

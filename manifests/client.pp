@@ -82,8 +82,18 @@ define burp::client (
   $password = fqdn_rand_string(10),
 ) {
 
-  ## Some input validations
+  ## Input validation
+  validate_absolute_path($working_dir)
+  validate_string($clientconfig_tag)
+  validate_hash($configuration)
+  validate_string($cron_minute)
   validate_re($cron_mode,['^b$','^t$'],'cron_mode must be one of "b" or "t"')
+  validate_integer($cron_randomise)
+  validate_bool($manage_clientconfig)
+  validate_bool($manage_cron)
+  validate_bool($manage_extraconfig)
+  validate_string($server)
+  validate_string($password)
 
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)

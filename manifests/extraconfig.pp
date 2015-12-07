@@ -28,6 +28,10 @@ define burp::extraconfig (
   $configuration,
 ) {
 
+  ## Input validation
+  validate_string($client)
+  validate_hash($configuration)
+
   concat::fragment { "burpclient_extra_${name}":
     target  => "${::burp::config_dir}/${client}-extra.conf",
     content => template('burp/burp-extra.conf.erb'),
