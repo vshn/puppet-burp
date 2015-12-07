@@ -4,6 +4,10 @@
 #
 # === Parameters
 #
+# [*clientname*]
+#   Default:
+#   Mandatory. Name of the BURP client.
+#
 # [*password*]
 #   Default:
 #   Mandatory. Password for the BURP client to authenticate against
@@ -24,11 +28,13 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::clientconfig (
+  $clientname,
   $password,
   $configuration = {},
 ) {
 
   ## Input validation
+  validate_string($clientname)
   validate_string($password)
   validate_hash($configuration)
 
@@ -39,10 +45,11 @@ define burp::clientconfig (
   $_configuration = merge($_default_configuration,$configuration)
 
   ## Write client configuration file
-  file { "${::burp::server::clientconfig_dir}/${name}":
-    ensure  => file,
+  $params = {
+    ensure => file,
     content => template('burp/burp-clientconfig.conf.erb'),
     require => Class['::burp::config'],
   }
+  ensure_resource('file',"${::burp::server::clientconfig_dir}/${clientname}",$params)
 
 }

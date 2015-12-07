@@ -126,7 +126,7 @@ define burp::client (
     concat { "${::burp::config_dir}/${name}-extra.conf":
       ensure  => present,
     }
-    concat::fragment { 'burpclient_extra_header':
+    concat::fragment { "burpclient_extra_header_${name}":
       target  => "${::burp::config_dir}/${name}-extra.conf",
       content => "# THIS FILE IS MANAGED BY PUPPET\n# Contains additional client configuration\n",
       order   => 01,
@@ -167,9 +167,10 @@ define burp::client (
     } else {
       $_clientconfig_tag = $clientconfig_tag
     }
-    @@::burp::clientconfig { $_clientname:
-      password => $password,
-      tag      => $_clientconfig_tag,
+    @@::burp::clientconfig { "$_clientname-${name}":
+      clientname => $_clientname,
+      password   => $password,
+      tag        => $_clientconfig_tag,
     }
   }
 
