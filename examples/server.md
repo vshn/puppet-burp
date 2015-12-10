@@ -1,4 +1,8 @@
-#
+# Example server configuration
+
+Create a new module named `profile_burp` and put this file in the `manifests` directory.
+
+```
 class profile_burp::server (
   $configuration = {},
   $manage_firewall = true,
@@ -42,3 +46,4 @@ class profile_burp::server (
   }
 
 }
+```

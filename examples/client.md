@@ -1,4 +1,8 @@
-#
+# Example client configuration
+
+Create a new module named `profile_burp` and put this file in the `manifests` directory.
+
+```
 class profile_burp::client (
   $server,
   $additional_includes = [],
@@ -60,3 +64,4 @@ class profile_burp::client (
   }
 
 }
+```
