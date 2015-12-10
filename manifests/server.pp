@@ -242,18 +242,22 @@ class burp::server (
   ## Deliver original scripts
   file { '/usr/local/bin/burp_timer_script':
     ensure => file,
+    mode   => '0775',
     source => 'puppet:///modules/burp/timer_script',
   }
   file { '/usr/local/bin/burp_summary_script':
     ensure => file,
+    mode   => '0775',
     source => 'puppet:///modules/burp/summary_script',
   }
   file { '/usr/local/bin/burp_notify_script':
     ensure => file,
+    mode   => '0775',
     source => 'puppet:///modules/burp/notify_script',
   }
   file { '/usr/local/bin/burp_ssl_extra_checks_script':
     ensure => file,
+    mode   => '0775',
     source => 'puppet:///modules/burp/ssl_extra_checks_script',
   }
 
