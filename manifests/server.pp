@@ -24,6 +24,10 @@
 #   Default: $::fqdn
 #   Puppet tag to collect exported `burp::clientconfig` resources.
 #
+# [*clientconfigs*]
+#   Default: {}
+#   Hash of `::burp::clientconfig` instances. Will be passed to `create_resources`.
+#
 # [*config_file*]
 #   Default: /etc/burp/burp-server.conf
 #   Configuration file to put BURP backup server configuration into.
@@ -107,6 +111,7 @@ class burp::server (
   $ca_enabled = true,
   $clientconfig_dir = '/etc/burp/clients',
   $clientconfig_tag = $::fqdn,
+  $clientconfigs = {},
   $config_file = '/etc/burp/burp-server.conf',
   $configuration = {},
   $group = 'burp',
@@ -255,6 +260,7 @@ class burp::server (
   ## Instantiate clientconfigs
   if $manage_clientconfig {
     ::Burp::Clientconfig <<| tag == $clientconfig_tag |>>
+    create_resources('::burp::clientconfig',$clientconfigs)
   }
 
   ## Manage service if enabled
