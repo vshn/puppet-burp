@@ -60,6 +60,10 @@
 #   Default: fqdn_rand_string(10)
 #   Password to authenticate the client on the BURP backup server.
 #
+# [*syslog*]
+#   Default: false
+#   Boolean stating whether to log to syslog or not.
+#
 # === Authors
 #
 # Tobias Brunner <tobias.brunner@vshn.ch>
@@ -80,6 +84,7 @@ define burp::client (
   $manage_extraconfig = true,
   $server = "backup.${::domain}",
   $password = fqdn_rand_string(10),
+  $syslog = false,
 ) {
 
   ## Input validation
@@ -94,6 +99,7 @@ define burp::client (
   validate_bool($manage_extraconfig)
   validate_string($server)
   validate_string($password)
+  validate_bool($syslog)
 
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)
@@ -116,9 +122,13 @@ define burp::client (
     'ssl_key'               => "${_ca_dir}/ssl_cert-client.key",
     'ssl_peer_cn'           => $server,
     'stdout'                => 1,
-    'syslog'                => 0,
   }
-  $_configuration = merge($_default_configuration,$configuration)
+  if $syslog {
+    $_logconfiguration = { 'syslog' => 1, }
+  } else {
+    $_logconfiguration = { 'syslog' => 0, }
+  }
+  $_configuration = merge($_default_configuration,$_logconfiguration,$configuration)
 
   ## Write client configuration file
   if $manage_extraconfig {
