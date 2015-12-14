@@ -167,7 +167,7 @@ define burp::client (
     } else {
       $_clientconfig_tag = $clientconfig_tag
     }
-    @@::burp::clientconfig { "$_clientname-${name}":
+    @@::burp::clientconfig { "${_clientname}-${name}":
       clientname => $_clientname,
       password   => $password,
       tag        => $_clientconfig_tag,
