@@ -35,7 +35,7 @@ In opposite to the original BURP packaging, this Puppet module configures BURP t
 files in `/etc/burp` and no dynamic data. All dynamic data like SSL certificates (CA) and the backup
 data is by default configured to be located under `/var/lib/burp` (server) and `/var/lib/burp-<clientname>`.
 
-There can by many client configurations, f.e. to backup to different backup servers
+There can be many client configurations, f.e. to backup to different backup servers
 with different parameters. Just instantiate the `::burp::client` defined type. The default
 client is name 'burp' because this is the name of the default configuration file and makes
 it easier to call the application (so you don't need to add `-c` to every call).
@@ -108,7 +108,7 @@ Example:
 
 ## More Examples
 
-Please see the `examples/profiles/` directory for more usage examples.
+Please see the `examples/` directory for more usage examples.
 
 ## Limitations
 
