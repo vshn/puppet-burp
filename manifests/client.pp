@@ -115,7 +115,7 @@ define burp::client (
     'ssl_cert_ca'           => "${_ca_dir}/ssl_cert_ca.pem",
     'ssl_key'               => "${_ca_dir}/ssl_cert-client.key",
     'ssl_peer_cn'           => $server,
-    'stdout'                => 1,
+    'stdout'                => 0,
     'syslog'                => 0,
   }
   $_configuration = merge($_default_configuration,$configuration)
