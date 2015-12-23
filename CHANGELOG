@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.1
+
+* Do not run cron so often
+* Set stdout to 0 by default
+* Syslog parameter configurable
+
 ## v1.0.0
 
 * Initial release
