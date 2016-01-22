@@ -21,6 +21,12 @@
 #   Values defined in this hash will get merged and will override the default
 #   parameters!
 #
+# [*server_configuration*]
+#   Default: {}
+#   Hash of client configuration directives put on the server side. See man page
+#   of BURP, section "SERVER CLIENTCONFDIR FILE", for a detailed list of all
+#   possible values.
+#
 # [*cron_minute*]
 #   Default: */5
 #   Minute part of the BURP backup client cron job.
@@ -76,6 +82,7 @@ define burp::client (
   $working_dir = "/var/lib/burp-${name}",
   $clientconfig_tag = undef,
   $configuration = {},
+  $server_configuration = {},
   $cron_minute = '*/15',
   $cron_mode = 't',
   $cron_randomise = '850',
@@ -179,9 +186,10 @@ define burp::client (
       $_clientconfig_tag = $clientconfig_tag
     }
     @@::burp::clientconfig { "${_clientname}-${name}":
-      clientname => $_clientname,
-      password   => $password,
-      tag        => $_clientconfig_tag,
+      clientname    => $_clientname,
+      password      => $password,
+      tag           => $_clientconfig_tag,
+      configuration => $server_configuration,
     }
   }
 
