@@ -83,6 +83,7 @@ define burp::client (
   $clientconfig_tag = undef,
   $configuration = {},
   $server_configuration = {},
+  $cron_hour = '*',
   $cron_minute = '*/15',
   $cron_mode = 't',
   $cron_randomise = '850',
@@ -98,7 +99,6 @@ define burp::client (
   validate_absolute_path($working_dir)
   validate_string($clientconfig_tag)
   validate_hash($configuration)
-  validate_string($cron_minute)
   validate_re($cron_mode,['^b$','^t$'],'cron_mode must be one of "b" or "t"')
   validate_integer($cron_randomise)
   validate_bool($manage_clientconfig)
@@ -107,6 +107,20 @@ define burp::client (
   validate_string($server)
   validate_string($password)
   validate_bool($syslog)
+  if is_string($cron_hour) {
+    $_cron_hour = [$cron_hour, ]
+  }
+  else {
+    validate_array($cron_hour)
+    $_cron_hour = $cron_hour
+  }
+  if is_string($cron_minute) {
+    $_cron_minute = [$cron_minute, ]
+  }
+  else {
+    validate_array($cron_minute)
+    $_cron_minute = $cron_minute
+  }
 
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)
@@ -169,7 +183,8 @@ define burp::client (
     cron { "burp_client_${name}":
       command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} -q ${cron_randomise} >/dev/null 2>&1",
       user    => 'root',
-      minute  => $cron_minute,
+      minute  => $_cron_minute,
+      hour    => $_cron_hour,
     }
   }
 
