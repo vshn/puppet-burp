@@ -27,6 +27,10 @@
 #   of BURP, section "SERVER CLIENTCONFDIR FILE", for a detailed list of all
 #   possible values.
 #
+# [*cron_hour*]
+#   Default: *
+#   Hour part of the BURP backup client cron job.
+#
 # [*cron_minute*]
 #   Default: */5
 #   Minute part of the BURP backup client cron job.
