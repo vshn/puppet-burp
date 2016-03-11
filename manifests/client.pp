@@ -4,6 +4,14 @@
 #
 # === Parameters
 #
+# [*ensure*]
+#   Default: present
+#   set to absent to remove client config (and cronjob)
+#
+# [*cron_ensure*]
+#   Default: present
+#   Enable or disable BURP backup client cron job.
+#
 # [*working_dir*]
 #   Default: /var/lib/burp-${name}
 #   Directory where all client related files are saved to (ex. ssl certificate).
@@ -55,10 +63,6 @@
 #   Default: true
 #   Manage BURP backup client cron job.
 #
-# [*enable_cron*]
-#   Default: true
-#   Manage enable or disable BURP backup client cron job.
-#
 # [*manage_extraconfig*]
 #   Default: true
 #   Manage BURP backup client extra configuration. If set to true, a extra
@@ -87,6 +91,8 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::client (
+  $ensure = present,
+  $cron_ensure = present,
   $working_dir = "/var/lib/burp-${name}",
   $clientconfig_tag = undef,
   $configuration = {},
@@ -97,7 +103,6 @@ define burp::client (
   $cron_randomise = '850',
   $manage_clientconfig = true,
   $manage_cron = true,
-  $enable_cron = true,
   $manage_extraconfig = true,
   $server = "backup.${::domain}",
   $password = fqdn_rand_string(10),
@@ -105,6 +110,8 @@ define burp::client (
 ) {
 
   ## Input validation
+  validate_string($ensure)
+  validate_string($cron_ensure)
   validate_absolute_path($working_dir)
   validate_string($clientconfig_tag)
   validate_hash($configuration)
@@ -113,10 +120,18 @@ define burp::client (
   validate_bool($manage_clientconfig)
   validate_bool($manage_cron)
   validate_bool($manage_extraconfig)
-  validate_bool($enable_cron)
   validate_string($server)
   validate_string($password)
   validate_bool($syslog)
+  if $ensure==present {
+    $_directory_ensure = directory
+    $_file_ensure = file
+    $_cron_ensure = $cron_ensure
+  } else {
+    $_directory_ensure = absent
+    $_file_ensure = absent
+    $_cron_ensure = absent
+  }
   if is_string($cron_hour) {
     $_cron_hour = [$cron_hour, ]
   }
@@ -130,11 +145,6 @@ define burp::client (
   else {
     validate_array($cron_minute)
     $_cron_minute = $cron_minute
-  }
-  if $enable_cron {
-    $_cron_ensure = present
-  } else {
-    $_cron_ensure = absent
   }
 
   ## Default configuration parameters for BURP client
@@ -171,7 +181,7 @@ define burp::client (
   if $manage_extraconfig {
     $_include = "${::burp::config_dir}/${name}-extra.conf"
     concat { "${::burp::config_dir}/${name}-extra.conf":
-      ensure  => present,
+      ensure  => $ensure,
     }
     concat::fragment { "burpclient_extra_header_${name}":
       target  => "${::burp::config_dir}/${name}-extra.conf",
@@ -180,24 +190,26 @@ define burp::client (
     }
   }
   file { "${::burp::config_dir}/${name}.conf":
-    ensure  => file,
+    ensure  => $_file_ensure,
     content => template('burp/burp.conf.erb'),
     require => Class['::burp::config'],
   }
 
   ## Prepare working dir
   file { $working_dir:
-    ensure => directory,
+    ensure => $_directory_ensure,
+    force  => true,
   } ->
   file { $_ca_dir:
-    ensure => directory,
+    ensure => $_directory_ensure,
+    force => true,
   }
 
   ## Cronjob
   if $manage_cron {
     cron { "burp_client_${name}":
-      command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} -q ${cron_randomise} >/dev/null 2>&1",
       ensure  => $_cron_ensure,
+      command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} -q ${cron_randomise} >/dev/null 2>&1",
       user    => 'root',
       minute  => $_cron_minute,
       hour    => $_cron_hour,
@@ -205,7 +217,7 @@ define burp::client (
   }
 
   ## Exported resource for clientconfig
-  if $manage_clientconfig {
+  if ($manage_clientconfig) and ($ensure == present) {
     if $configuration['cname'] {
       $_clientname = $configuration['cname']
     } else {
