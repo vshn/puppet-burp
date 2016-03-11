@@ -55,6 +55,10 @@
 #   Default: true
 #   Manage BURP backup client cron job.
 #
+# [*enable_cron*]
+#   Default: true
+#   Manage enable or disable BURP backup client cron job.
+#
 # [*manage_extraconfig*]
 #   Default: true
 #   Manage BURP backup client extra configuration. If set to true, a extra
@@ -93,6 +97,7 @@ define burp::client (
   $cron_randomise = '850',
   $manage_clientconfig = true,
   $manage_cron = true,
+  $enable_cron = true,
   $manage_extraconfig = true,
   $server = "backup.${::domain}",
   $password = fqdn_rand_string(10),
@@ -108,6 +113,7 @@ define burp::client (
   validate_bool($manage_clientconfig)
   validate_bool($manage_cron)
   validate_bool($manage_extraconfig)
+  validate_bool($enable_cron)
   validate_string($server)
   validate_string($password)
   validate_bool($syslog)
@@ -124,6 +130,11 @@ define burp::client (
   else {
     validate_array($cron_minute)
     $_cron_minute = $cron_minute
+  }
+  if $enable_cron {
+    $_cron_ensure = present
+  } else {
+    $_cron_ensure = absent
   }
 
   ## Default configuration parameters for BURP client
@@ -186,6 +197,7 @@ define burp::client (
   if $manage_cron {
     cron { "burp_client_${name}":
       command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} -q ${cron_randomise} >/dev/null 2>&1",
+      ensure  => $_cron_ensure,
       user    => 'root',
       minute  => $_cron_minute,
       hour    => $_cron_hour,
