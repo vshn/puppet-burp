@@ -211,6 +211,7 @@ class burp::server (
   file { $config_file:
     ensure  => file,
     content => template('burp/burp.conf.erb'),
+    mode    => 0600,
     owner   => $user,
     group   => $group,
     require => Class['::burp::config'],
@@ -221,6 +222,7 @@ class burp::server (
     file { $ca_config_file:
       ensure  => file,
       content => template('burp/CA.cnf.erb'),
+      mode    => 0600,
       owner   => $user,
       group   => $group,
       require => Class['::burp::config'],
@@ -230,11 +232,13 @@ class burp::server (
   ## Prepare working directories
   file { $user_home:
     ensure => directory,
+    mode   => 0750,
     owner  => $user,
     group  => $group,
   } ->
   file { $clientconfig_dir:
     ensure  => directory,
+    mode    => 0750,
     purge   => true,
     recurse => true,
   }
@@ -242,22 +246,22 @@ class burp::server (
   ## Deliver original scripts
   file { '/usr/local/bin/burp_timer_script':
     ensure => file,
-    mode   => '0775',
+    mode   => '0755',
     source => 'puppet:///modules/burp/timer_script',
   }
   file { '/usr/local/bin/burp_summary_script':
     ensure => file,
-    mode   => '0775',
+    mode   => '0755',
     source => 'puppet:///modules/burp/summary_script',
   }
   file { '/usr/local/bin/burp_notify_script':
     ensure => file,
-    mode   => '0775',
+    mode   => '0755',
     source => 'puppet:///modules/burp/notify_script',
   }
   file { '/usr/local/bin/burp_ssl_extra_checks_script':
     ensure => file,
-    mode   => '0775',
+    mode   => '0755',
     source => 'puppet:///modules/burp/ssl_extra_checks_script',
   }
 

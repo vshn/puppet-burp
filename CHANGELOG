@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v1.2.0
+
+* Apply explicit file and directory permissions:
+  - /etc/burp: 0750
+  - /etc/burp/burp-server.conf: 0600
+  - /etc/burp/CA.cnf: 0600
+  - /etc/burp/clients: 0750
+  - /etc/burp/clients/$client: 0600
+  - /etc/burp/$name.conf: 0600
+  - /etc/burp/$name-extra.conf: 0600
+  - /usr/local/bin/burp_notify_script: 0755 (before: 0775)
+  - /usr/local/bin/burp_ssl_extra_checks_script: 0755 (before: 0775)
+  - /usr/local/bin/burp_summary_script: 0755 (before: 0775)
+  - /usr/local/bin/burp_timer_script: 0755 (before: 0775)
+  - /var/lib/burp: 0750
+  - /var/lib/burp-$name: 0750
+  - /var/lib/burp-$name/ssl: 0700
+
 ## v1.1.0
 
 * New parameters on burp::client

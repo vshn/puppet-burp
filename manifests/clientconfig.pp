@@ -46,9 +46,10 @@ define burp::clientconfig (
 
   ## Write client configuration file
   $params = {
-    ensure => file,
+    ensure  => file,
     content => template('burp/burp-clientconfig.conf.erb'),
     require => Class['::burp::config'],
+    mode    => 0600,
   }
   ensure_resource('file',"${::burp::server::clientconfig_dir}/${clientname}",$params)
 
