@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.2.1
+
+* Bump version in metadata
+
 ## v1.2.0
 
 * Apply explicit file and directory permissions:
