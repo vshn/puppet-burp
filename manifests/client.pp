@@ -182,7 +182,7 @@ define burp::client (
     $_include = "${::burp::config_dir}/${name}-extra.conf"
     concat { "${::burp::config_dir}/${name}-extra.conf":
       ensure => $ensure,
-      mode   => 0600,
+      mode   => '0600',
     }
     concat::fragment { "burpclient_extra_header_${name}":
       target  => "${::burp::config_dir}/${name}-extra.conf",
@@ -194,18 +194,18 @@ define burp::client (
     ensure  => $_file_ensure,
     content => template('burp/burp.conf.erb'),
     require => Class['::burp::config'],
-    mode    => 0600,
+    mode    => '0600',
   }
 
   ## Prepare working dir
   file { $working_dir:
     ensure => $_directory_ensure,
-    mode   => 0750,
+    mode   => '0750',
     force  => true,
   } ->
   file { $_ca_dir:
     ensure => $_directory_ensure,
-    mode   => 0700,
+    mode   => '0700',
     force  => true,
   }
 

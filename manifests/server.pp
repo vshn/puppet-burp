@@ -51,7 +51,7 @@
 # [*manage_rsyslog*]
 #   Default: true
 #   Put a rsyslog config file under /etc/rsyslog.d/21-burp.conf to filter syslog
-#   messages from BURP backup server and put them into /var/log/burp.log.
+#   messages from BURP backup server and put them into /var/log/burp/burp.log.
 #
 # [*manage_service*]
 #   Default: true
@@ -211,7 +211,7 @@ class burp::server (
   file { $config_file:
     ensure  => file,
     content => template('burp/burp.conf.erb'),
-    mode    => 0600,
+    mode    => '0600',
     owner   => $user,
     group   => $group,
     require => Class['::burp::config'],
@@ -222,7 +222,7 @@ class burp::server (
     file { $ca_config_file:
       ensure  => file,
       content => template('burp/CA.cnf.erb'),
-      mode    => 0600,
+      mode    => '0600',
       owner   => $user,
       group   => $group,
       require => Class['::burp::config'],
@@ -232,13 +232,13 @@ class burp::server (
   ## Prepare working directories
   file { $user_home:
     ensure => directory,
-    mode   => 0750,
+    mode   => '0750',
     owner  => $user,
     group  => $group,
   } ->
   file { $clientconfig_dir:
     ensure  => directory,
-    mode    => 0750,
+    mode    => '0750',
     purge   => true,
     recurse => true,
   }
@@ -275,11 +275,17 @@ class burp::server (
   if $manage_service {
     File[$config_file] ~> Service['burp']
     if $manage_rsyslog {
+      file { '/var/log/burp':
+        ensure => directory,
+        mode   => '0700',
+        owner  => 'syslog',
+        group  => 'adm',
+      }
       # Pitfall: This file resource does not notify rsyslog and so it only comes active
       # after manually reloading rsyslog
       file { '/etc/rsyslog.d/21-burp.conf':
         ensure  => file,
-        content => 'if $programname == \'burp\' then /var/log/burp.log',
+        content => 'if $programname == \'burp\' then /var/log/burp/burp.log',
         before  => Service['burp'],
       }
     }
