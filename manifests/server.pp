@@ -211,7 +211,7 @@ class burp::server (
   file { $config_file:
     ensure  => file,
     content => template('burp/burp.conf.erb'),
-    mode    => 0600,
+    mode    => '0600',
     owner   => $user,
     group   => $group,
     require => Class['::burp::config'],
@@ -222,7 +222,7 @@ class burp::server (
     file { $ca_config_file:
       ensure  => file,
       content => template('burp/CA.cnf.erb'),
-      mode    => 0600,
+      mode    => '0600',
       owner   => $user,
       group   => $group,
       require => Class['::burp::config'],
@@ -232,13 +232,13 @@ class burp::server (
   ## Prepare working directories
   file { $user_home:
     ensure => directory,
-    mode   => 0750,
+    mode   => '0750',
     owner  => $user,
     group  => $group,
   } ->
   file { $clientconfig_dir:
     ensure  => directory,
-    mode    => 0750,
+    mode    => '0750',
     purge   => true,
     recurse => true,
   }
