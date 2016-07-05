@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.3.0
+
+* Quote file mode specifications for Puppet 4
+* Move server logs from /var/log/burp.log to /var/log/burp/burp.log
+
 ## v1.2.1
 
 * Bump version in metadata
