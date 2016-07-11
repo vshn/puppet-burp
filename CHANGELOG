@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.3.1
+
+* Change timer_script to allow ensuring backups even if time-bands
+  have run out
+
 ## v1.3.0
 
 * Quote file mode specifications for Puppet 4
