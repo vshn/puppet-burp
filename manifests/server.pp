@@ -217,6 +217,11 @@ class burp::server (
     require => Class['::burp::config'],
   }
 
+  File <| tag == 'burp_config_file' |> {
+    owner => $user,
+    group => $group,
+  }
+
   ## Prepare CA
   if $ca_enabled {
     file { $ca_config_file:
