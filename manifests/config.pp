@@ -10,6 +10,7 @@ class burp::config {
     purge   => true,
     recurse => true,
     force   => true,
+    tag     => 'burp_config_file',
   }
 
 }
