@@ -297,6 +297,7 @@ class burp::server (
       ],
     } ->
     service { 'burp':
+      name   => $service_name,
       ensure => running,
       enable => true,
     }
