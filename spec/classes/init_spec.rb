@@ -11,7 +11,7 @@ describe 'burp' do
 
         it { is_expected.to compile.with_all_deps }
 
-        it { is_expected.to contain_class('burp::install').that_comes_before('burp::config') }
+        it { is_expected.to contain_class('burp::install').that_comes_before('Class[burp::config]') }
         it { is_expected.to contain_class('burp::config') }
         it { is_expected.to contain_class('burp') }
 
