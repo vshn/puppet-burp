@@ -15,7 +15,7 @@
 # [*package_name*]
 #   Default: burp
 #   Name of the package.
-#
+
 # [*config_dir*]
 #   Default: /etc/burp
 #   Path where all the BURP configuration files will be written to.

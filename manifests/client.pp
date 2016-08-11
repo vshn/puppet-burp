@@ -53,6 +53,14 @@
 #   When running a timed backup (`t` mode), sleep for a random number of seconds (between 0 and the  number  given)
 #   before contacting the server.
 #
+# [*user*]
+#   Default: undef
+#   user for config files, don't set to non existing user
+#
+# [*group*]
+#   Default: undef
+#   group for config files, don't set to non existing user
+#
 # [*manage_clientconfig*]
 #   Default: true
 #   Manage clientconfig or not. If true, an exported resource of type
@@ -101,6 +109,10 @@ define burp::client (
   $cron_minute = '*/15',
   $cron_mode = 't',
   $cron_randomise = '850',
+  $user = undef,
+  $group = undef,
+  $config_file_mode = '0600',
+  $homedir_file_mode = '0750',
   $manage_clientconfig = true,
   $manage_cron = true,
   $manage_extraconfig = true,
@@ -117,6 +129,8 @@ define burp::client (
   validate_hash($configuration)
   validate_re($cron_mode,['^b$','^t$'],'cron_mode must be one of "b" or "t"')
   validate_integer($cron_randomise)
+  validate_string($user)
+  validate_string($group)
   validate_bool($manage_clientconfig)
   validate_bool($manage_cron)
   validate_bool($manage_extraconfig)
@@ -182,7 +196,9 @@ define burp::client (
     $_include = "${::burp::config_dir}/${name}-extra.conf"
     concat { "${::burp::config_dir}/${name}-extra.conf":
       ensure => $ensure,
-      mode   => '0600',
+      mode   => $config_file_mode,
+      owner  => $user,
+      group  => $group,
     }
     concat::fragment { "burpclient_extra_header_${name}":
       target  => "${::burp::config_dir}/${name}-extra.conf",
@@ -194,7 +210,9 @@ define burp::client (
     ensure  => $_file_ensure,
     content => template('burp/burp.conf.erb'),
     require => Class['::burp::config'],
-    mode    => '0600',
+    mode    => $config_file_mode,
+    owner   => $user,
+    group   => $group,
   }
 
   ## Prepare working dir
@@ -202,11 +220,15 @@ define burp::client (
     ensure => $_directory_ensure,
     mode   => '0750',
     force  => true,
+    owner  => $user,
+    group  => $group,
   } ->
   file { $_ca_dir:
     ensure => $_directory_ensure,
-    mode   => '0700',
+    mode   => $config_file_mode,
     force  => true,
+    owner  => $user,
+    group  => $group,
   }
 
   ## Cronjob
