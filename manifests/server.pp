@@ -44,6 +44,18 @@
 #   Default: burp
 #   Group to run BURP backup server under.
 #
+# [*user*]
+#   Default: burp
+#   User to run BURP backup server under.
+#
+# [*config_file_mode*]
+#   Default: 0600
+#   Mode of burp config dirs and files
+#
+# [*homedir_file_mode*]
+#   Default: 0750
+#   Mode of burp data dirs and files
+#
 # [*manage_clientconfig*]
 #   Default: true
 #   Collect `::burp::clientconfig` exported resources, filtered by `clientconfig_tag`.
@@ -89,10 +101,6 @@
 #   Default: /var/lib/burp/ssl_cert-server.key
 #   BURP backup server SSL certificate key file.
 #
-# [*user*]
-#   Default: burp
-#   User to run BURP backup server under.
-#
 # [*user_home*]
 #   Default: /var/lib/burp
 #   BURP backup server home and working directory.
@@ -114,7 +122,10 @@ class burp::server (
   $clientconfigs = {},
   $config_file = '/etc/burp/burp-server.conf',
   $configuration = {},
+  $user = 'burp',
   $group = 'burp',
+  $config_file_mode = '0600',
+  $homedir_file_mode = '0750',
   $manage_clientconfig = true,
   $manage_rsyslog = true,
   $manage_service = true,
@@ -126,7 +137,6 @@ class burp::server (
   $ssl_cert_ca = '/var/lib/burp/ssl_cert_ca.pem',
   $ssl_dhfile = '/var/lib/burp/dhfile.pem',
   $ssl_key = '/var/lib/burp/ssl_cert-server.key',
-  $user = 'burp',
   $user_home = '/var/lib/burp',
 ) {
 
@@ -211,7 +221,7 @@ class burp::server (
   file { $config_file:
     ensure  => file,
     content => template('burp/burp.conf.erb'),
-    mode    => '0600',
+    mode    => $config_file_mode,
     owner   => $user,
     group   => $group,
     require => Class['::burp::config'],
@@ -222,7 +232,7 @@ class burp::server (
     file { $ca_config_file:
       ensure  => file,
       content => template('burp/CA.cnf.erb'),
-      mode    => '0600',
+      mode    => $config_file_mode,
       owner   => $user,
       group   => $group,
       require => Class['::burp::config'],
@@ -232,15 +242,17 @@ class burp::server (
   ## Prepare working directories
   file { $user_home:
     ensure => directory,
-    mode   => '0750',
+    mode   => $homedir_file_mode,
     owner  => $user,
     group  => $group,
   } ->
   file { $clientconfig_dir:
     ensure  => directory,
-    mode    => '0750',
+    mode    => $config_file_mode,
     purge   => true,
     recurse => true,
+    owner   => $user,
+    group   => $group,
   }
 
   ## Deliver original scripts
@@ -297,8 +309,8 @@ class burp::server (
       ],
     } ->
     service { 'burp':
-      name   => $service_name,
       ensure => running,
+      name   => $service_name,
       enable => true,
     }
   }
