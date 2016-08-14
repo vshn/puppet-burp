@@ -105,6 +105,14 @@
 #   Default: /var/lib/burp
 #   BURP backup server home and working directory.
 #
+# [*config_file_replace*]
+#   Default: true
+#   Boolean stating whether to overwrite local changes to config files.
+#
+# [*scripts_replace*]
+#   Default: true
+#   Boolean stating whether to overwrite local changes to scripts.
+#
 # === Authors
 #
 # Tobias Brunner <tobias.brunner@vshn.ch>
@@ -138,6 +146,8 @@ class burp::server (
   $ssl_dhfile = '/var/lib/burp/dhfile.pem',
   $ssl_key = '/var/lib/burp/ssl_cert-server.key',
   $user_home = '/var/lib/burp',
+  $config_file_replace = true,
+  $scripts_replace = true,
 ) {
 
   ## Input validation
@@ -162,7 +172,9 @@ class burp::server (
   validate_absolute_path($ssl_key)
   validate_string($user)
   validate_absolute_path($user_home)
-
+  validate_bool($config_file_replace)
+  validate_bool($scripts_replace)
+  
   include ::burp
 
   ## Default configuration parameters for BURP server
@@ -225,6 +237,7 @@ class burp::server (
     owner   => $user,
     group   => $group,
     require => Class['::burp::config'],
+    replace => $config_file_replace,
   }
 
   ## Prepare CA
@@ -236,6 +249,7 @@ class burp::server (
       owner   => $user,
       group   => $group,
       require => Class['::burp::config'],
+      replace => $config_file_replace,
     }
   }
 
@@ -257,24 +271,28 @@ class burp::server (
 
   ## Deliver original scripts
   file { '/usr/local/bin/burp_timer_script':
-    ensure => file,
-    mode   => '0755',
-    source => 'puppet:///modules/burp/timer_script',
+    ensure  => file,
+    mode    => '0755',
+    source  => 'puppet:///modules/burp/timer_script',
+    replace => $scripts_replace,
   }
   file { '/usr/local/bin/burp_summary_script':
-    ensure => file,
-    mode   => '0755',
-    source => 'puppet:///modules/burp/summary_script',
+    ensure  => file,
+    mode    => '0755',
+    source  => 'puppet:///modules/burp/summary_script',
+    replace => $scripts_replace,
   }
   file { '/usr/local/bin/burp_notify_script':
-    ensure => file,
-    mode   => '0755',
-    source => 'puppet:///modules/burp/notify_script',
+    ensure  => file,
+    mode    => '0755',
+    source  => 'puppet:///modules/burp/notify_script',
+    replace => $scripts_replace,
   }
   file { '/usr/local/bin/burp_ssl_extra_checks_script':
-    ensure => file,
-    mode   => '0755',
-    source => 'puppet:///modules/burp/ssl_extra_checks_script',
+    ensure  => file,
+    mode    => '0755',
+    source  => 'puppet:///modules/burp/ssl_extra_checks_script',
+    replace => $scripts_replace,
   }
 
   ## Instantiate clientconfigs
