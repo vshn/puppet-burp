@@ -60,6 +60,10 @@
 #   Default: true
 #   Collect `::burp::clientconfig` exported resources, filtered by `clientconfig_tag`.
 #
+# [*manage_package*]
+#   Default: true
+#   Enable or disable package installation.
+#
 # [*manage_rsyslog*]
 #   Default: true
 #   Put a rsyslog config file under /etc/rsyslog.d/21-burp.conf to filter syslog
@@ -72,6 +76,14 @@
 # [*manage_user*]
 #   Default: true
 #   Manage the BURP backup system service user.
+#
+# [*package_ensure*]
+#   Default: installed
+#   Can be used to choose exact package version to install.
+#
+# [*package_name*]
+#   Default: burp-server
+#   Manage the BURP backup system server package.
 #
 # [*service_enable*]
 #   Default: true
@@ -135,9 +147,12 @@ class burp::server (
   $config_file_mode = '0600',
   $homedir_file_mode = '0750',
   $manage_clientconfig = true,
+  $manage_package = true,
   $manage_rsyslog = true,
   $manage_service = true,
   $manage_user = true,
+  $package_ensure = 'installed',
+  $package_name = 'burp-server',
   $service_enable = true,
   $service_ensure = 'running',
   $service_name = 'burp',
@@ -299,6 +314,14 @@ class burp::server (
   if $manage_clientconfig {
     ::Burp::Clientconfig <<| tag == $clientconfig_tag |>>
     create_resources('::burp::clientconfig',$clientconfigs)
+  }
+
+  ## Manage package if enabled
+
+  if $manage_package  {
+    package { $package_name:
+      ensure => $package_ensure,
+    }
   }
 
   ## Manage service if enabled
