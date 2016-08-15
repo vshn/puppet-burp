@@ -52,6 +52,7 @@ define burp::clientconfig (
     mode    => $::burp::client::config_file_mode,
     owner   => $::burp::client::user,
     group   => $::burp::client::group,
+    replace => $::burp::server::config_file_replace,
   }
   ensure_resource('file',"${::burp::server::clientconfig_dir}/${clientname}",$params)
 

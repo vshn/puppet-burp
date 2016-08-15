@@ -90,6 +90,10 @@
 #   Default: false
 #   Boolean stating whether to log to syslog or not.
 #
+# [*config_file_replace*]
+#   Default: true
+#   Boolean stating whether to overwrite local changes to config files.
+#
 # === Authors
 #
 # Tobias Brunner <tobias.brunner@vshn.ch>
@@ -119,6 +123,7 @@ define burp::client (
   $server = "backup.${::domain}",
   $password = fqdn_rand_string(10),
   $syslog = false,
+  $config_file_replace = true,
 ) {
 
   ## Input validation
@@ -137,6 +142,7 @@ define burp::client (
   validate_string($server)
   validate_string($password)
   validate_bool($syslog)
+  validate_bool($config_file_replace)
   if $ensure==present {
     $_directory_ensure = directory
     $_file_ensure = file
@@ -195,10 +201,11 @@ define burp::client (
   if $manage_extraconfig {
     $_include = "${::burp::config_dir}/${name}-extra.conf"
     concat { "${::burp::config_dir}/${name}-extra.conf":
-      ensure => $ensure,
-      mode   => $config_file_mode,
-      owner  => $user,
-      group  => $group,
+      ensure  => $ensure,
+      mode    => $config_file_mode,
+      owner   => $user,
+      group   => $group,
+      replace => $config_file_replace,
     }
     concat::fragment { "burpclient_extra_header_${name}":
       target  => "${::burp::config_dir}/${name}-extra.conf",
@@ -213,6 +220,7 @@ define burp::client (
     mode    => $config_file_mode,
     owner   => $user,
     group   => $group,
+    replace => $config_file_replace,
   }
 
   ## Prepare working dir
