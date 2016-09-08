@@ -8,7 +8,6 @@ class burp::config {
     ensure  => directory,
     mode    => '0755',
     purge   => true,
-    recurse => true,
     force   => true,
   }
 
