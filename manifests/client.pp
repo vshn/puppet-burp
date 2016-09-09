@@ -167,6 +167,9 @@ define burp::client (
     $_cron_minute = $cron_minute
   }
 
+  # include base class
+  include ::burp
+
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)
   $_ca_dir = "${working_dir}/ssl"
