@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.4.0
+
+* Parameter to configure service name. Thanks to @kronos-pbrideau
+* User, group and mode configuration for several files
+* Several permission fixes
+* Allow local changes to config files and scripts. Thanks to @cbergmann
+
 ## v1.3.1
 
 * Change timer_script to allow ensuring backups even if time-bands
