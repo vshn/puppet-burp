@@ -263,8 +263,8 @@ class burp::server (
   file { $clientconfig_dir:
     ensure  => directory,
     mode    => $config_file_mode,
-    purge   => true,
-    recurse => true,
+    purge   => $config_file_replace,
+    recurse => $config_file_replace,
     owner   => $user,
     group   => $group,
   }
