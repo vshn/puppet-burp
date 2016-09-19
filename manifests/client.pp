@@ -209,6 +209,7 @@ define burp::client (
       owner   => $user,
       group   => $group,
       replace => $config_file_replace,
+      require => Class['::burp::config'],
     }
     concat::fragment { "burpclient_extra_header_${name}":
       target  => "${::burp::config_dir}/${name}-extra.conf",
