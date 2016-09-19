@@ -6,7 +6,7 @@ class burp::config {
 
   file { $::burp::config_dir:
     ensure  => directory,
-    mode    => '0750',
+    mode    => '0755',
     purge   => true,
     recurse => true,
     force   => true,
