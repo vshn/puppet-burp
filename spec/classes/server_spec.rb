@@ -16,6 +16,7 @@ describe 'burp::server' do
         it { is_expected.to contain_file('/etc/burp/burp-server.conf').with_ensure('file') }
         it { is_expected.to contain_file('/etc/burp/CA.cnf').with_ensure('file') }
         it { is_expected.to contain_file('/etc/burp/clients').with_ensure('directory') }
+        it { is_expected.to contain_file('/etc/logrotate.d/burp').with_ensure('present') }
         it { is_expected.to contain_file('/etc/rsyslog.d/21-burp.conf').with_ensure('file') }
         it { is_expected.to contain_file('/usr/local/bin/burp_notify_script').with_ensure('file') }
         it { is_expected.to contain_file('/usr/local/bin/burp_timer_script').with_ensure('file') }

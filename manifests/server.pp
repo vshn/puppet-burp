@@ -60,6 +60,11 @@
 #   Default: true
 #   Collect `::burp::clientconfig` exported resources, filtered by `clientconfig_tag`.
 #
+# [*manage_logrotate*]
+#   Default: true
+#   Rotate /var/log/burp/burp.log daily. Only active if manage_rsyslog is true as well.
+#   Requires rodjek/logrotate module.
+#
 # [*manage_rsyslog*]
 #   Default: true
 #   Put a rsyslog config file under /etc/rsyslog.d/21-burp.conf to filter syslog
@@ -135,6 +140,7 @@ class burp::server (
   $config_file_mode = '0600',
   $homedir_file_mode = '0750',
   $manage_clientconfig = true,
+  $manage_logrotate = true,
   $manage_rsyslog = true,
   $manage_service = true,
   $manage_user = true,
@@ -317,6 +323,19 @@ class burp::server (
         ensure  => file,
         content => 'if $programname == \'burp\' then /var/log/burp/burp.log',
         before  => Service['burp'],
+      }
+      # Define Logrotate
+      if $manage_logrotate {
+        logrotate::rule { 'burp':
+          path         => '/var/log/burp/burp.log',
+          copytruncate => true,
+          missingok    => true,
+          rotate_every => 'day',
+          rotate       => '31', # must be a string to be recognised as an integer...
+          compress     => true,
+          ifempty      => true,
+          postrotate   => 'reload rsyslog /dev/null 2>&1 || true',
+        }
       }
     }
     augeas { '/etc/default/burp':
