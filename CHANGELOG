@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.4.1
+
+* Added log rotation (requires module rodjek/logrotate)
+
 ## v1.4.0
 
 * Parameter to configure service name. Thanks to @kronos-pbrideau
