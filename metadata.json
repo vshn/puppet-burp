@@ -1,6 +1,6 @@
 {
   "name": "vshn-burp",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "author": "Tobias Brunner",
   "summary": "BURP - BackUp and Restore Program",
   "license": "BSD-3-Clause",
