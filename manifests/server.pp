@@ -183,6 +183,18 @@ class burp::server (
 
   include ::burp
 
+  # OS specifics
+  case downcase($::osfamily) {
+    'debian': {
+      $_syslog_owner = 'syslog'
+      $_nologin = '/usr/sbin/nologin'
+    }
+    'redhat': {
+      $_syslog_owner = 'adm'
+      $_nologin = '/sbin/nologin'
+    }
+  }
+
   ## Default configuration parameters for BURP server
   # parameters coming from a default BURP installation (most of them)
   $_default_configuration = {
@@ -230,7 +242,7 @@ class burp::server (
       comment    => 'BURP server service user',
       home       => $user_home,
       managehome => false,
-      shell      => '/usr/sbin/nologin',
+      shell      => $_nologin,
       system     => true,
     }
   }
@@ -279,24 +291,32 @@ class burp::server (
   file { '/usr/local/bin/burp_timer_script':
     ensure  => file,
     mode    => '0755',
+    owner   => 'root',
+    group   => 'root',
     source  => 'puppet:///modules/burp/timer_script',
     replace => $scripts_replace,
   }
   file { '/usr/local/bin/burp_summary_script':
     ensure  => file,
     mode    => '0755',
+    owner   => 'root',
+    group   => 'root',
     source  => 'puppet:///modules/burp/summary_script',
     replace => $scripts_replace,
   }
   file { '/usr/local/bin/burp_notify_script':
     ensure  => file,
     mode    => '0755',
+    owner   => 'root',
+    group   => 'root',
     source  => 'puppet:///modules/burp/notify_script',
     replace => $scripts_replace,
   }
   file { '/usr/local/bin/burp_ssl_extra_checks_script':
     ensure  => file,
     mode    => '0755',
+    owner   => 'root',
+    group   => 'root',
     source  => 'puppet:///modules/burp/ssl_extra_checks_script',
     replace => $scripts_replace,
   }
@@ -314,7 +334,7 @@ class burp::server (
       file { '/var/log/burp':
         ensure => directory,
         mode   => '0700',
-        owner  => 'syslog',
+        owner  => $_syslog_owner,
         group  => 'adm',
       }
       # Pitfall: This file resource does not notify rsyslog and so it only comes active
