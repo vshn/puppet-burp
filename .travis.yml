@@ -1,21 +1,30 @@
 ---
+sudo: false
+dist: trusty
 language: ruby
-bundler_args: --without development system_tests
-before_install: rm Gemfile.lock || true
-rvm:
-  - 2.1.0
-  - 2.3.0
-script: bundle exec rake test
-env:
-  - PUPPET_VERSION="~> 3.8.0" STRICT_VARIABLES=yes
-  - PUPPET_VERSION="~> 3.8.0" STRICT_VARIABLES=yes FUTURE_PARSER=yes
-  - PUPPET_VERSION="~> 4.0.0" STRICT_VARIABLES=yes
-  - PUPPET_VERSION="~> 4.1.0" STRICT_VARIABLES=yes
-  - PUPPET_VERSION="~> 4.2.0" STRICT_VARIABLES=yes
-  - PUPPET_VERSION="~> 4.5.3" STRICT_VARIABLES=yes
+cache: bundler
+before_install:
+  - rm -f Gemfile.lock
+script:
+  - 'bundle exec rake $CHECK'
 matrix:
-  exclude:
-    - rvm: 2.3.0
-      env: PUPPET_VERSION="~> 3.8.0" STRICT_VARIABLES=yes
-    - rvm: 2.3.0
-      env: PUPPET_VERSION="~> 3.8.0" STRICT_VARIABLES=yes FUTURE_PARSER=yes
+  fast_finish: true
+  include:
+  - rvm: 2.1.9
+    bundler_args: --without system_tests development release
+    env: PUPPET_VERSION="~> 3.8.0" CHECK=test PARALLEL_TEST_PROCESSORS=12
+  - rvm: 2.3.0
+    bundler_args: --without system_tests development release
+    env: PUPPET_VERSION="~> 4.1.0" CHECK=test PARALLEL_TEST_PROCESSORS=12
+  - rvm: 2.3.0
+    bundler_args: --without system_tests development release
+    env: PUPPET_VERSION="~> 4.2.0" CHECK=test PARALLEL_TEST_PROCESSORS=12
+  - rvm: 2.3.0
+    bundler_args: --without system_tests development release
+    env: PUPPET_VERSION="~> 4.5.3" CHECK=test PARALLEL_TEST_PROCESSORS=12
+  - rvm: 2.4.2
+    bundler_args: --without system_tests development release
+    env: PUPPET_VERSION="~> 5.0" CHECK=test
+  - rvm: 2.4.2
+    bundler_args: --without system_tests development release
+    env: PUPPET_VERSION="~> 5.0" CHECK=build
