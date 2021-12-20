@@ -49,7 +49,7 @@ define burp::clientconfig (
     ensure  => file,
     content => template('burp/burp-clientconfig.conf.erb'),
     require => Class['::burp::config'],
-    mode    => $::burp::client::config_file_mode,
+    mode    => $::burp::server::config_file_mode,
     owner   => $::burp::server::user,
     group   => $::burp::server::group,
     replace => $::burp::server::config_file_replace,
