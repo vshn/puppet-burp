@@ -1,6 +1,6 @@
 {
   "name": "vshn-burp",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "author": "Tobias Brunner",
   "summary": "BURP - BackUp and Restore Program",
   "license": "BSD-3-Clause",
@@ -72,7 +72,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">=3.7.0 <6.0.0"
+      "version_requirement": ">=3.7.0 <8.0.0"
     }
   ]
 }
