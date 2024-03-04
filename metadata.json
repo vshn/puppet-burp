@@ -1,6 +1,6 @@
 {
   "name": "vshn-burp",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "author": "Tobias Brunner",
   "summary": "BURP - BackUp and Restore Program",
   "license": "BSD-3-Clause",
@@ -27,45 +27,11 @@
   ],
   "operatingsystem_support": [
     {
-      "operatingsystem": "RedHat",
-      "operatingsystemrelease": [
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "CentOS",
-      "operatingsystemrelease": [
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "OracleLinux",
-      "operatingsystemrelease": [
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "Scientific",
-      "operatingsystemrelease": [
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": [
-        "7",
-        "8"
-      ]
-    },
-    {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "12.04",
-        "14.04"
+        "18.04",
+        "20.04",
+        "22.04"
       ]
     }
   ],
