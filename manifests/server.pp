@@ -63,7 +63,7 @@
 # [*manage_logrotate*]
 #   Default: true
 #   Rotate /var/log/burp/burp.log daily. Only active if manage_rsyslog is true as well.
-#   Requires rodjek/logrotate module.
+#   Requires puppet/logrotate module.
 #
 # [*manage_rsyslog*]
 #   Default: true
