@@ -11,11 +11,9 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 class burp::install {
-
-  if $::burp::manage_package  {
-    package { $::burp::package_name:
-      ensure => $::burp::package_ensure,
+  if $burp::manage_package {
+    package { $burp::package_name:
+      ensure => $burp::package_ensure,
     }
   }
-
 }

@@ -127,64 +127,38 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 class burp::server (
-  $ca_config_file = '/etc/burp/CA.cnf',
-  $ca_dir = '/var/lib/burp/CA',
-  $ca_enabled = true,
-  $clientconfig_dir = '/etc/burp/clients',
-  $clientconfig_tag = $::fqdn,
-  $clientconfigs = {},
-  $config_file = '/etc/burp/burp-server.conf',
-  $configuration = {},
-  $user = 'burp',
-  $group = 'burp',
-  $config_file_mode = '0600',
-  $homedir_file_mode = '0750',
-  $manage_clientconfig = true,
-  $manage_logrotate = true,
-  $manage_rsyslog = true,
-  $manage_service = true,
-  $manage_user = true,
-  $service_enable = true,
-  $service_ensure = 'running',
-  $service_name = 'burp',
-  $ssl_cert = '/var/lib/burp/ssl_cert-server.pem',
-  $ssl_cert_ca = '/var/lib/burp/ssl_cert_ca.pem',
-  $ssl_dhfile = '/var/lib/burp/dhfile.pem',
-  $ssl_key = '/var/lib/burp/ssl_cert-server.key',
-  $user_home = '/var/lib/burp',
-  $config_file_replace = true,
-  $scripts_replace = true,
+  Stdlib::Absolutepath $ca_config_file = '/etc/burp/CA.cnf',
+  Stdlib::Absolutepath $ca_dir = '/var/lib/burp/CA',
+  Boolean $ca_enabled = true,
+  Stdlib::Absolutepath $clientconfig_dir = '/etc/burp/clients',
+  String[1] $clientconfig_tag = $facts['networking']['fqdn'],
+  Hash $clientconfigs = {},
+  Stdlib::Absolutepath $config_file = '/etc/burp/burp-server.conf',
+  Hash $configuration = {},
+  String[1] $user = 'burp',
+  String[1] $group = 'burp',
+  String[1] $config_file_mode = '0600',
+  String[1] $homedir_file_mode = '0750',
+  Boolean $manage_clientconfig = true,
+  Boolean $manage_logrotate = true,
+  Boolean $manage_rsyslog = true,
+  Boolean $manage_service = true,
+  Boolean $manage_user = true,
+  Boolean $service_enable = true,
+  String[1] $service_ensure = 'running',
+  String[1] $service_name = 'burp',
+  Stdlib::Absolutepath $ssl_cert = '/var/lib/burp/ssl_cert-server.pem',
+  Stdlib::Absolutepath $ssl_cert_ca = '/var/lib/burp/ssl_cert_ca.pem',
+  Stdlib::Absolutepath $ssl_dhfile = '/var/lib/burp/dhfile.pem',
+  Stdlib::Absolutepath $ssl_key = '/var/lib/burp/ssl_cert-server.key',
+  Stdlib::Absolutepath $user_home = '/var/lib/burp',
+  Boolean $config_file_replace = true,
+  Boolean $scripts_replace = true,
 ) {
-
-  ## Input validation
-  validate_absolute_path($ca_config_file)
-  validate_absolute_path($ca_dir)
-  validate_bool($ca_enabled)
-  validate_absolute_path($clientconfig_dir)
-  validate_string($clientconfig_tag)
-  validate_absolute_path($config_file)
-  validate_hash($configuration)
-  validate_string($group)
-  validate_bool($manage_clientconfig)
-  validate_bool($manage_rsyslog)
-  validate_bool($manage_service)
-  validate_bool($manage_user)
-  validate_bool($service_enable)
-  validate_string($service_ensure)
-  validate_string($service_name)
-  validate_absolute_path($ssl_cert)
-  validate_absolute_path($ssl_cert_ca)
-  validate_absolute_path($ssl_dhfile)
-  validate_absolute_path($ssl_key)
-  validate_string($user)
-  validate_absolute_path($user_home)
-  validate_bool($config_file_replace)
-  validate_bool($scripts_replace)
-
-  include ::burp
+  include burp
 
   # OS specifics
-  case downcase($::osfamily) {
+  case downcase($facts['os']['family']) {
     'debian': {
       $_syslog_owner = 'syslog'
       $_nologin = '/usr/sbin/nologin'
@@ -201,7 +175,7 @@ class burp::server (
     'ca_burp_ca'                  => '/usr/sbin/burp_ca',
     'ca_conf'                     => $ca_config_file,
     'ca_name'                     => 'burpCA',
-    'ca_server_name'              => $::fqdn,
+    'ca_server_name'              => $facts['networking']['fqdn'],
     'client_can_delete'           => 1,
     'client_can_force_backup'     => 1,
     'client_can_list'             => 1,
@@ -225,8 +199,8 @@ class burp::server (
     'stdout'                      => 0,
     'syslog'                      => 1,
     'timer_arg'                   => ['20h',
-                                      'Mon,Tue,Wed,Thu,Fri,00,01,02,03,04,05,19,20,21,22,23',
-                                      'Sat,Sun,00,01,02,03,04,05,06,07,08,17,18,19,20,21,22,23', ],
+      'Mon,Tue,Wed,Thu,Fri,00,01,02,03,04,05,19,20,21,22,23',
+    'Sat,Sun,00,01,02,03,04,05,06,07,08,17,18,19,20,21,22,23',],
     'timer_script'                => '/usr/local/bin/burp_timer_script',
     'umask'                       => '0022',
     'user'                        => $user,
@@ -254,7 +228,7 @@ class burp::server (
     mode    => $config_file_mode,
     owner   => $user,
     group   => $group,
-    require => Class['::burp::config'],
+    require => Class['burp::config'],
     replace => $config_file_replace,
   }
 
@@ -266,7 +240,7 @@ class burp::server (
       mode    => $config_file_mode,
       owner   => $user,
       group   => $group,
-      require => Class['::burp::config'],
+      require => Class['burp::config'],
       replace => $config_file_replace,
     }
   }
@@ -277,8 +251,8 @@ class burp::server (
     mode   => $homedir_file_mode,
     owner  => $user,
     group  => $group,
-  } ->
-  file { $clientconfig_dir:
+  }
+  -> file { $clientconfig_dir:
     ensure  => directory,
     mode    => $config_file_mode,
     purge   => $config_file_replace,
@@ -364,12 +338,11 @@ class burp::server (
         'set RUN yes',
         "set DAEMON_ARGS '\"-c ${config_file}\"'",
       ],
-    } ->
-    service { 'burp':
+    }
+    -> service { 'burp':
       ensure => running,
       name   => $service_name,
       enable => true,
     }
   }
-
 }
