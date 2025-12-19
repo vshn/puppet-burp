@@ -4,17 +4,16 @@ Create a new module named `profile_burp` and put this file in the `manifests` di
 
 ```
 class profile_burp::client (
-  $server,
-  $additional_includes = [],
-  $cname = $::fqdn,
-  $configuration = {},
-  $dedup_group = 'global',
-  $encryption_password = undef,
+  String    $server,
+  Array     $additional_includes = [],
+  String    $cname = $facts['networking']['fqdn'],
+  Hash      $configuration = {},
+  String    $dedup_group = 'global',
+  String    $encryption_password = undef,
 ) {
 
   include ::burp
 
-  validate_array($additional_includes)
   $_default_includes = [
     '/boot/grub',
     '/etc',

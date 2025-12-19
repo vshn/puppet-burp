@@ -23,16 +23,12 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::extraconfig (
-  $configuration,
-  $client = 'burp',
+  Hash    $configuration,
+  String  $client = 'burp',
 ) {
 
-  ## Input validation
-  validate_string($client)
-  validate_hash($configuration)
-
   concat::fragment { "burpclient_extra_${name}":
-    target  => "${::burp::config_dir}/${client}-extra.conf",
+    target  => "${burp::config_dir}/${client}-extra.conf",
     content => template('burp/burp-extra.conf.erb'),
     order   => 10,
   }
