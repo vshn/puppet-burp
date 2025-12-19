@@ -28,15 +28,10 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::clientconfig (
-  $clientname,
-  $password,
-  $configuration = {},
+  String    $clientname,
+  String    $password,
+  Hash      $configuration = {},
 ) {
-
-  ## Input validation
-  validate_string($clientname)
-  validate_string($password)
-  validate_hash($configuration)
 
   ## Default configuration parameters for BURP clientconfig
   $_default_configuration = {
@@ -48,12 +43,12 @@ define burp::clientconfig (
   $params = {
     ensure  => file,
     content => template('burp/burp-clientconfig.conf.erb'),
-    require => Class['::burp::config'],
-    mode    => $::burp::server::config_file_mode,
-    owner   => $::burp::server::user,
-    group   => $::burp::server::group,
-    replace => $::burp::server::config_file_replace,
+    require => Class['burp::config'],
+    mode    => $burp::server::config_file_mode,
+    owner   => $burp::server::user,
+    group   => $burp::server::group,
+    replace => $burp::server::config_file_replace,
   }
-  ensure_resource('file',"${::burp::server::clientconfig_dir}/${clientname}",$params)
+  ensure_resource('file',"${burp::server::clientconfig_dir}/${clientname}",$params)
 
 }

@@ -22,7 +22,7 @@
 #
 # [*clients*]
 #   Default: {}
-#   Hash of `::burp::client` instances. Will be passed to `create_resources`.
+#   Hash of `burp::client` instances. Will be passed to `create_resources`.
 #
 # === Authors
 #
@@ -34,29 +34,23 @@
 #
 class burp (
   # package installation handling
-  $manage_package = true,
-  $package_ensure = 'installed',
-  $package_name = 'burp',
+  Boolean               $manage_package = true,
+  Enum['present','absent','purged','disabled','installed','latest']
+                        $package_ensure = 'installed',
+  String                $package_name = 'burp',
   # general burp configuration handling (client/server)
-  $config_dir = '/etc/burp',
+  Stdlib::Absolutepath  $config_dir = '/etc/burp',
   # clients
-  $clients = {},
+  Hash                  $clients = {},
 ) {
 
-  ## Input validation
-  validate_bool($manage_package)
-  validate_string($package_ensure)
-  validate_string($package_name)
-  validate_absolute_path($config_dir)
-  validate_hash($clients)
-
   ## Install BURP
-  class { '::burp::install': } ->
-  class { '::burp::config': }
-  contain ::burp::install
-  contain ::burp::config
+  class { 'burp::install': }
+  -> class { 'burp::config': }
+  contain burp::install
+  contain burp::config
 
   ## Instantiate Clients
-  create_resources('::burp::client',$clients)
+  create_resources('burp::client',$clients)
 
 }

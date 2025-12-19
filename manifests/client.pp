@@ -18,7 +18,7 @@
 #
 # [*clientconfig_tag*]
 #   Default: $server
-#   Puppet tag which gets assigned to `::burp::clientconfig` resources for
+#   Puppet tag which gets assigned to `burp::clientconfig` resources for
 #   later collection on the BURP server using exported resources.
 #
 # [*configuration*]
@@ -64,7 +64,7 @@
 # [*manage_clientconfig*]
 #   Default: true
 #   Manage clientconfig or not. If true, an exported resource of type
-#   `::burp::clientconfig` will be created and the tag `clientconfig_tag`
+#   `burp::clientconfig` will be created and the tag `clientconfig_tag`
 #   assigned. Can be collected on the BURP backup server.
 #
 # [*manage_cron*]
@@ -79,7 +79,7 @@
 #   defined type.
 #
 # [*server*]
-#   Default: "backup.${::domain}"
+#   Default: "backup.${facts['networking']['domain']}"
 #   BURP backup server address.
 #
 # [*password*]
@@ -103,46 +103,30 @@
 # Copyright 2015 Tobias Brunner, VSHN AG
 #
 define burp::client (
-  $ensure = present,
-  $cron_ensure = present,
-  $working_dir = "/var/lib/burp-${name}",
-  $clientconfig_tag = undef,
-  $configuration = {},
-  $server_configuration = {},
-  $cron_hour = '*',
-  $cron_minute = '*/15',
-  $cron_mode = 't',
-  $cron_randomise = '850',
-  $user = undef,
-  $group = undef,
-  $config_file_mode = '0600',
-  $homedir_file_mode = '0750',
-  $manage_clientconfig = true,
-  $manage_cron = true,
-  $manage_extraconfig = true,
-  $server = "backup.${::domain}",
-  $password = fqdn_rand_string(10),
-  $syslog = false,
-  $config_file_replace = true,
+  Enum['present','absent']  $ensure = present,
+  Enum['present','absent']  $cron_ensure = present,
+  Stdlib::Absolutepath      $working_dir = "/var/lib/burp-${name}",
+  Optional[String]          $clientconfig_tag = undef,
+  Hash                      $configuration = {},
+  Hash                      $server_configuration = {},
+  Variant[String,Array]     $cron_hour = '*',
+  Variant[String,Array]     $cron_minute = '*/15',
+  Enum['b', 't']            $cron_mode = 't',
+  Integer                   $cron_randomise = 850,
+  String                    $user = undef,
+  String                    $group = undef,
+  Stdlib::Filemode          $config_file_mode = '0600',
+  Stdlib::Filemode          $homedir_file_mode = '0750',
+  Boolean                   $manage_clientconfig = true,
+  Boolean                   $manage_cron = true,
+  Boolean                   $manage_extraconfig = true,
+  Stdlib::Fqdn              $server = "backup.${facts['networking']['domain']}",
+  String                    $password = fqdn_rand_string(10),
+  Boolean                   $syslog = false,
+  Boolean                   $config_file_replace = true,
 ) {
 
   ## Input validation
-  validate_string($ensure)
-  validate_string($cron_ensure)
-  validate_absolute_path($working_dir)
-  validate_string($clientconfig_tag)
-  validate_hash($configuration)
-  validate_re($cron_mode,['^b$','^t$'],'cron_mode must be one of "b" or "t"')
-  validate_integer($cron_randomise)
-  validate_string($user)
-  validate_string($group)
-  validate_bool($manage_clientconfig)
-  validate_bool($manage_cron)
-  validate_bool($manage_extraconfig)
-  validate_string($server)
-  validate_string($password)
-  validate_bool($syslog)
-  validate_bool($config_file_replace)
   if $ensure==present {
     $_directory_ensure = directory
     $_file_ensure = file
@@ -152,23 +136,11 @@ define burp::client (
     $_file_ensure = absent
     $_cron_ensure = absent
   }
-  if is_string($cron_hour) {
-    $_cron_hour = [$cron_hour, ]
-  }
-  else {
-    validate_array($cron_hour)
-    $_cron_hour = $cron_hour
-  }
-  if is_string($cron_minute) {
-    $_cron_minute = [$cron_minute, ]
-  }
-  else {
-    validate_array($cron_minute)
-    $_cron_minute = $cron_minute
-  }
+  $_cron_hour = Array($cron_hour, true)
+  $_cron_minute = Array($cron_minute, true)
 
   # include base class
-  include ::burp
+  include burp
 
   ## Default configuration parameters for BURP client
   # parameters coming from a default BURP installation (most of them)
@@ -176,7 +148,7 @@ define burp::client (
   $_default_configuration = {
     'ca_burp_ca'            => '/usr/sbin/burp_ca',
     'ca_csr_dir'            => $_ca_dir,
-    'cname'                 => $::fqdn,
+    'cname'                 => $facts['networking']['fqdn'],
     'cross_all_filesystems' => 0,
     'cross_filesystem'      => '/home',
     'mode'                  => 'client',
@@ -202,25 +174,25 @@ define burp::client (
 
   ## Write client configuration file
   if $manage_extraconfig {
-    $_include = "${::burp::config_dir}/${name}-extra.conf"
-    concat { "${::burp::config_dir}/${name}-extra.conf":
+    $_include = "${burp::config_dir}/${name}-extra.conf"
+    concat { "${burp::config_dir}/${name}-extra.conf":
       ensure  => $ensure,
       mode    => $config_file_mode,
       owner   => $user,
       group   => $group,
       replace => $config_file_replace,
-      require => Class['::burp::config'],
+      require => Class['burp::config'],
     }
     concat::fragment { "burpclient_extra_header_${name}":
-      target  => "${::burp::config_dir}/${name}-extra.conf",
+      target  => "${burp::config_dir}/${name}-extra.conf",
       content => "# THIS FILE IS MANAGED BY PUPPET\n# Contains additional client configuration\n",
       order   => 01,
     }
   }
-  file { "${::burp::config_dir}/${name}.conf":
+  file { "${burp::config_dir}/${name}.conf":
     ensure  => $_file_ensure,
     content => template('burp/burp.conf.erb'),
-    require => Class['::burp::config'],
+    require => Class['burp::config'],
     mode    => $config_file_mode,
     owner   => $user,
     group   => $group,
@@ -234,8 +206,8 @@ define burp::client (
     force  => true,
     owner  => $user,
     group  => $group,
-  } ->
-  file { $_ca_dir:
+  }
+  -> file { $_ca_dir:
     ensure => $_directory_ensure,
     mode   => $config_file_mode,
     force  => true,
@@ -247,7 +219,7 @@ define burp::client (
   if $manage_cron {
     cron { "burp_client_${name}":
       ensure  => $_cron_ensure,
-      command => "/usr/sbin/burp -c ${::burp::config_dir}/${name}.conf -a ${cron_mode} -q ${cron_randomise} >/dev/null 2>&1",
+      command => "/usr/sbin/burp -c ${burp::config_dir}/${name}.conf -a ${cron_mode} -q ${cron_randomise} >/dev/null 2>&1",
       user    => 'root',
       minute  => $_cron_minute,
       hour    => $_cron_hour,
@@ -259,14 +231,14 @@ define burp::client (
     if $configuration['cname'] {
       $_clientname = $configuration['cname']
     } else {
-      $_clientname = $::fqdn
+      $_clientname = $facts['networking']['fqdn']
     }
     if $clientconfig_tag == undef {
       $_clientconfig_tag = $server
     } else {
       $_clientconfig_tag = $clientconfig_tag
     }
-    @@::burp::clientconfig { "${_clientname}-${name}":
+    @@burp::clientconfig { "${_clientname}-${name}":
       clientname    => $_clientname,
       password      => $password,
       tag           => $_clientconfig_tag,
