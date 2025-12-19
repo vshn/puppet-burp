@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.4.6
+
+* user and group are optional on the client
+
 ## v1.4.5
 
 * linter and puppet8 fixes
